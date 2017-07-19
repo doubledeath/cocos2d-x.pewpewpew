@@ -8,28 +8,36 @@ class Projectile : public cocos2d::Sprite, public Collidable {
 public:
     virtual void CollidesToWorld();
 
-    virtual void CollidesToNodes(std::vector<cocos2d::Node *> Nodes);
+    virtual bool CollidesToNodes(std::vector<cocos2d::Node *> Nodes);
 
     int GetShootTag();
 
-    float GetDistance();
+    float GetVelocity();
 
     float GetVelocityFactor();
 
-    float GetVelocity();
+    float GetDistance();
+
+    float GetDamage();
 
     void SetVelocityFactor(float VelocityFactor);
+
+    void SetDamageFactor(float DamageFactor);
 
 protected:
     void SetShootTag(int ShootTag);
 
+    void SetVelocity(float Velocity);
+
     void SetDistance(float Distance);
 
-    void SetVelocity(float Velocity);
+    void SetDamage(float Damage);
 
 private:
     int ShootTag = AppConsts::Projectile::SHOOT_TAG;
     float Velocity = AppConsts::Projectile::VELOCITY;
     float VelocityFactor = AppConsts::Projectile::VELOCITY_FACTOR;
     float Distance = AppConsts::Projectile::DISTANCE;
+    float Damage = AppConsts::Projectile::DAMAGE;
+    float DamageFactor = AppConsts::Projectile::DAMAGE_FACTOR;
 };

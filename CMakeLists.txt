@@ -137,6 +137,9 @@ set(GAME_SRC
   Classes/GameLogic/Player/Cannon.cpp
   Classes/GameLogic/Projectile/Projectile.cpp
   Classes/GameLogic/Projectile/CannonBall.cpp
+  Classes/GameLogic/Enemy/Enemy.cpp
+  Classes/GameLogic/Enemy/Balloon.cpp
+  Classes/GameLogic/GameObject/Wind.cpp
   Classes/Support/StringHelper.cpp)
 
 set(GAME_HEADERS
@@ -148,11 +151,15 @@ set(GAME_HEADERS
   Classes/GameLogic/World.h
   Classes/GameLogic/Physics.h
   Classes/GameLogic/Collidable.h
+  Classes/GameLogic/CollisionManager.h
   Classes/GameLogic/Player/Player.h
   Classes/GameLogic/Player/Cannon.h
   Classes/GameLogic/Projectile/Projectile.h
   Classes/GameLogic/Projectile/CannonBall.h
-  Classes/Support/StringHelper.h Classes/GameLogic/Enemy/Enemy.cpp Classes/GameLogic/Enemy/Enemy.h)
+  Classes/GameLogic/Enemy/Enemy.h
+  Classes/GameLogic/Enemy/Balloon.h
+  Classes/GameLogic/GameObject/Wind.h
+  Classes/Support/StringHelper.h)
 
 
 # Configure libcocos2d:

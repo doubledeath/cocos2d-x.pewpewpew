@@ -21,6 +21,6 @@ bool SplashScene::init() {
     return true;
 }
 
-void SplashScene::StartMainScene(float Delay) {
+void SplashScene::StartMainScene(float Delta) {
     Director::getInstance()->replaceScene(TransitionFade::create(AppConsts::SplashScene::FADE_TIME, MainScene::CreateScene()));
 }

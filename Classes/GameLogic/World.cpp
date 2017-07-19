@@ -1,6 +1,8 @@
 #include "World.h"
 #include "AppConsts.h"
 #include "Player/Cannon.h"
+#include "Enemy/Balloon.h"
+#include "GameObject/Wind.h"
 
 USING_NS_CC;
 
@@ -15,8 +17,10 @@ bool World::init() {
 
     CreateEnvironment();
     CreatePhysics();
+    AddGameObjects();
     AddEventDispatcher();
     SpawnCannon();
+    SpawnEnemies();
 
     return true;
 }
@@ -38,6 +42,13 @@ void World::CreatePhysics() {
     Physics = Physics::Create();
 
     addChild(Physics);
+}
+
+void World::AddGameObjects() {
+    // Add a wind
+    auto Wind = Wind::Create();
+
+    Physics->addChild(Wind);
 }
 
 void World::AddEventDispatcher() {
@@ -70,10 +81,24 @@ void World::AddEventDispatcher() {
 }
 
 void World::SpawnCannon() {
-    Player *Player = Cannon::Create();
+    auto _Player = Cannon::Create();
 
-    PlayerList.push_back(Player);
-    Physics->addChild(Player);
+    PlayerList.push_back(static_cast<Player *>(_Player));
+    Physics->addChild(_Player);
+}
+
+void World::SpawnEnemies() {
+    unsigned int Enemies = 5; // todo
+
+    if (Enemies > 0) {
+        schedule([=](float Delta) {
+            auto _Enemy = Balloon::Create();
+
+            Physics->addChild(_Enemy);
+
+            _Enemy->OnSpawned();
+        }, 1.0f / 2, Enemies - 1, 0, "SpawnEnemies"); // Little delay between spawns
+    }
 }
 
 void World::TouchOrClickEventDown(cocos2d::Touch *Touch, cocos2d::EventMouse *EventMouse) {

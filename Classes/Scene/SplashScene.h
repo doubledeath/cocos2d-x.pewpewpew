@@ -10,5 +10,5 @@ public:
 
     CREATE_FUNC(SplashScene);
 private:
-    void StartMainScene(float Delay);
+    void StartMainScene(float Delta);
 };

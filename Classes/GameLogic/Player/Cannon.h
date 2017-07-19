@@ -19,5 +19,5 @@ private:
     bool IsReloading;
     bool IsRotating;
 
-    void OnReloaded(float Delay);
+    void OnReloaded(float Delta);
 };

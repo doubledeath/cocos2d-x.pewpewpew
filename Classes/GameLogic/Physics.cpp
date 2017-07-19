@@ -19,19 +19,34 @@ bool Physics::init() {
 void Physics::update(float Delta) {
     Node::update(Delta);
 
-    for (auto Child : CollidableChildren) {
-        if (auto Node = dynamic_cast<cocos2d::Node *>(Child)) {
-            auto CollidesToWorld = IsCollidesWorld(Node);
-            auto CollidesToNodes = GetCollidedNodes(Node);
+    std::vector<std::pair<Collidable *, std::vector<Node *>>> CollidesToNodesChildren;
+
+    for (auto CollidableChild : CollidableChildren) {
+        if (CollidableChild->IsCollisionForceIgnored()) {
+            continue;
+        }
+
+        if (auto _Node = dynamic_cast<cocos2d::Node *>(CollidableChild)) {
+            auto CollidesToWorld = IsCollidesWorld(_Node);
+            auto CollidesToNodes = GetCollidedNodes(_Node);
 
             if (CollidesToWorld) {
-                Child->CollidesToWorld();
+                CollidableChild->CollidesToWorld();
             }
 
             if (CollidesToNodes.size() > 0) {
-                Child->CollidesToNodes(CollidesToNodes);
+                CollidesToNodesChildren.push_back(std::pair<Collidable *, std::vector<Node *>>(CollidableChild, CollidesToNodes));
             }
         }
+    }
+
+    // Another pass for nodes collision
+    for (auto CollidesToNodes : CollidesToNodesChildren) {
+        CollidesToNodes.first->CollidesToNodes(CollidesToNodes.second);
+    }
+
+    for (auto Child : getChildren()) {
+        Child->update(Delta);
     }
 }
 
@@ -52,17 +67,26 @@ void Physics::removeChild(cocos2d::Node *Child, bool CleanUp) {
     Node::removeChild(Child, CleanUp);
 }
 
+bool Physics::IsCollidesToWorld(cocos2d::Node *Node) {
+    return IsCollidesWorld(Node);
+}
+
+bool Physics::IsCollidesToNode(cocos2d::Node *Node, cocos2d::Node *Target) {
+    auto CollidesToNodes = GetCollidedNodes(Node);
+
+    return std::find(CollidesToNodes.begin(), CollidesToNodes.end(), Target) != CollidesToNodes.end();
+}
+
 bool Physics::IsCollidesWorld(cocos2d::Node *Target) {
     auto WorldOrigin = Director::getInstance()->getVisibleOrigin();
     auto WorldSize = Director::getInstance()->getVisibleSize();
     auto TargetOrigin = Target->getBoundingBox().origin;
     auto TargetSize = Target->getBoundingBox().size;
 
-    // Negative for not using equality check on floats
-    return !(TargetOrigin.x > WorldOrigin.x &&
-             TargetOrigin.y + TargetSize.height < WorldOrigin.y + WorldSize.height &&
-             TargetOrigin.x + TargetSize.width < WorldOrigin.x + WorldSize.width &&
-             TargetOrigin.y > WorldOrigin.y);
+    return TargetOrigin.x <= WorldOrigin.x||
+           TargetOrigin.y + TargetSize.height >= WorldOrigin.y + WorldSize.height ||
+           TargetOrigin.x + TargetSize.width >= WorldOrigin.x + WorldSize.width ||
+           TargetOrigin.y <= WorldOrigin.y;
 }
 
 std::vector<cocos2d::Node *> Physics::GetCollidedNodes(cocos2d::Node *Target) {

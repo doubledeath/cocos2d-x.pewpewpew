@@ -2,8 +2,9 @@
 
 #include "cocos2d.h"
 #include "Collidable.h"
+#include "CollisionManager.h"
 
-class Physics : public cocos2d::Node {
+class Physics : public cocos2d::Node, public CollisionManager {
 public:
     static Physics *Create();
 
@@ -16,6 +17,10 @@ public:
     virtual void removeChild(cocos2d::Node *Child, bool CleanUp);
 
     CREATE_FUNC(Physics);
+
+    virtual bool IsCollidesToWorld(cocos2d::Node *Node);
+
+    virtual bool IsCollidesToNode(cocos2d::Node *Node, cocos2d::Node *Target);
 
 private:
     std::vector<Collidable *> CollidableChildren;

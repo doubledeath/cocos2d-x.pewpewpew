@@ -10,7 +10,6 @@ public:
 
     virtual bool init();
 
-
     CREATE_FUNC(World);
 private:
     struct TouchOrClickInfo {
@@ -28,9 +27,13 @@ private:
 
     void CreatePhysics();
 
+    void AddGameObjects();
+
     void AddEventDispatcher();
 
     void SpawnCannon();
+
+    void SpawnEnemies();
 
     void TouchOrClickEventDown(cocos2d::Touch *Touch, cocos2d::EventMouse *EventMouse);
 

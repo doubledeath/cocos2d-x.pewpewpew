@@ -6,7 +6,7 @@ class Collidable {
 public:
     virtual void CollidesToWorld() = 0;
 
-    virtual void CollidesToNodes(std::vector<cocos2d::Node *> NodeList) = 0;
+    virtual bool CollidesToNodes(std::vector<cocos2d::Node *> NodeList) = 0;
 
     bool IsCollisionForceIgnored();
 

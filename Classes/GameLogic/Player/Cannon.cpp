@@ -68,7 +68,7 @@ void Cannon::OnWorldLongTouchOrClick(cocos2d::Vec2 Location) {
     }
 }
 
-void Cannon::OnReloaded(float Delay) {
+void Cannon::OnReloaded(float Delta) {
     IsReloading = false;
 }
 
