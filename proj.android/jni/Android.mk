@@ -13,19 +13,7 @@ LOCAL_MODULE_FILENAME := libMyGame
 
 LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/AppDelegate.cpp \
-                   ../../Classes/AppConsts.cpp \
-                   ../../Classes/Scene/SplashScene.cpp \
-                   ../../Classes/Scene/MainScene.cpp \
-                   ../../Classes/GameLogic/World.cpp \
-                   ../../Classes/GameLogic/Physics.cpp \
-                   ../../Classes/GameLogic/Collidable.cpp \
-                   ../../Classes/GameLogic/Player/Cannon.cpp \
-                   ../../Classes/GameLogic/Projectile/Projectile.cpp \
-                   ../../Classes/GameLogic/Projectile/CannonBall.cpp \
-                   ../../Classes/GameLogic/Enemy/Enemy.cpp \
-                   ../../Classes/GameLogic/Enemy/Balloon.cpp \
-                   ../../Classes/GameLogic/GameObject/Wind.cpp \
-                   ../../Classes/Support/StringHelper.cpp
+                   ../../Classes/HelloWorldScene.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 

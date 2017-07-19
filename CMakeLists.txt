@@ -127,39 +127,15 @@ endif( WIN32 )
 
 set(GAME_SRC
   Classes/AppDelegate.cpp
+  Classes/HelloWorldScene.cpp
   ${PLATFORM_SPECIFIC_SRC}
-  Classes/AppConsts.cpp
-  Classes/Scene/SplashScene.cpp
-  Classes/Scene/MainScene.cpp
-  Classes/GameLogic/World.cpp
-  Classes/GameLogic/Physics.cpp
-  Classes/GameLogic/Collidable.cpp
-  Classes/GameLogic/Player/Cannon.cpp
-  Classes/GameLogic/Projectile/Projectile.cpp
-  Classes/GameLogic/Projectile/CannonBall.cpp
-  Classes/GameLogic/Enemy/Enemy.cpp
-  Classes/GameLogic/Enemy/Balloon.cpp
-  Classes/GameLogic/GameObject/Wind.cpp
-  Classes/Support/StringHelper.cpp)
+)
 
 set(GAME_HEADERS
   Classes/AppDelegate.h
+  Classes/HelloWorldScene.h
   ${PLATFORM_SPECIFIC_HEADERS}
-  Classes/AppConsts.h
-  Classes/Scene/SplashScene.h
-  Classes/Scene/MainScene.h
-  Classes/GameLogic/World.h
-  Classes/GameLogic/Physics.h
-  Classes/GameLogic/Collidable.h
-  Classes/GameLogic/CollisionManager.h
-  Classes/GameLogic/Player/Player.h
-  Classes/GameLogic/Player/Cannon.h
-  Classes/GameLogic/Projectile/Projectile.h
-  Classes/GameLogic/Projectile/CannonBall.h
-  Classes/GameLogic/Enemy/Enemy.h
-  Classes/GameLogic/Enemy/Balloon.h
-  Classes/GameLogic/GameObject/Wind.h
-  Classes/Support/StringHelper.h)
+)
 
 
 # Configure libcocos2d:
