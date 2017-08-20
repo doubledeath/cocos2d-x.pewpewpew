@@ -20,6 +20,7 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/GameLogic/Physics/Damageable.cpp \
                    ../../Classes/GameLogic/Physics/Movable.cpp \
                    ../../Classes/GameLogic/Physics/MovableSprite.cpp \
+                   ../../Classes/GameLogic/Physics/MRSprite.cpp \
                    ../../Classes/GameLogic/Physics/ParentCollidable.cpp \
                    ../../Classes/GameLogic/Physics/Physics.cpp \
                    ../../Classes/GameLogic/Physics/Projectile.cpp \
