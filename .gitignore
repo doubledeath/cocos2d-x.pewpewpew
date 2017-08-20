@@ -1,0 +1,14 @@
+*.user
+
+bin
+cmake-build-debug
+cocos2d
+linux-build
+
+proj.android
+proj.android-studio
+proj.ios_mac
+proj.linux
+proj.tizen
+proj.win10
+proj.win32

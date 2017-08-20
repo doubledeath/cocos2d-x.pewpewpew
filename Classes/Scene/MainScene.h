@@ -1,12 +1,16 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "GameLogic/World/World.h"
 
-class MainScene : public cocos2d::Scene {
+class MainScene : public cocos2d::Scene
+{
 public:
-    static cocos2d::Scene *CreateScene();
+    CREATE_FUNC(MainScene)
 
-    virtual bool init();
+    virtual bool init() override;
+private:
+    World *mWorld;
 
-    CREATE_FUNC(MainScene);
+    void createWorld();
 };

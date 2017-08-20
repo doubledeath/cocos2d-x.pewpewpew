@@ -127,17 +127,51 @@ endif (WIN32)
 
 set(GAME_SRC
         Classes/AppDelegate.cpp
-        Classes/Scene/SplashScene.cpp
+        Classes/GameLogic/Enemy/Balloon.cpp
+        Classes/GameLogic/Enemy/Enemy.cpp
+        Classes/GameLogic/Physics/CollidableNode.cpp
+        Classes/GameLogic/Physics/CollidableSprite.cpp
+        Classes/GameLogic/Physics/Damageable.cpp
+        Classes/GameLogic/Physics/Movable.cpp
+        Classes/GameLogic/Physics/MovableSprite.cpp
+        Classes/GameLogic/Physics/ParentCollidable.cpp
+        Classes/GameLogic/Physics/Physics.cpp
+        Classes/GameLogic/Physics/Projectile.cpp
+        Classes/GameLogic/Player/Cannon.cpp
+        Classes/GameLogic/Projectile/CannonBall.cpp
+        Classes/GameLogic/World/World.cpp
         Classes/Scene/MainScene.cpp
-        Classes/AppConsts.cpp
+        Classes/Scene/SplashScene.cpp
         ${PLATFORM_SPECIFIC_SRC})
 
 set(GAME_HEADERS
         Classes/AppDelegate.h
-        Classes/Scene/SplashScene.h
-        Classes/Scene/MainScene.h
         Classes/AppConsts.h
-        ${PLATFORM_SPECIFIC_HEADERS})
+        Classes/GameLogic/Enemy/Balloon.h
+        Classes/GameLogic/Enemy/Enemy.h
+        Classes/GameLogic/Enemy/EnemyConsts.h
+        Classes/GameLogic/Physics/Collidable.h
+        Classes/GameLogic/Physics/CollidableNode.h
+        Classes/GameLogic/Physics/CollidableSprite.h
+        Classes/GameLogic/Physics/CollidableType.h
+        Classes/GameLogic/Physics/CollidableTypeMask.h
+        Classes/GameLogic/Physics/Damageable.h
+        Classes/GameLogic/Physics/Movable.h
+        Classes/GameLogic/Physics/MovableSprite.h
+        Classes/GameLogic/Physics/ParentCollidable.h
+        Classes/GameLogic/Physics/Physics.h
+        Classes/GameLogic/Physics/PhysicsConsts.h
+        Classes/GameLogic/Physics/Projectile.h
+        Classes/GameLogic/Player/Cannon.h
+        Classes/GameLogic/Player/Player.h
+        Classes/GameLogic/Player/PlayerConsts.h
+        Classes/GameLogic/Projectile/CannonBall.h
+        Classes/GameLogic/Projectile/ProjectileConsts.h
+        Classes/GameLogic/World/World.h
+        Classes/GameLogic/World/WorldConsts.h
+        Classes/Scene/MainScene.h
+        Classes/Scene/SplashScene.h
+        ${PLATFORM_SPECIFIC_HEADERS} )
 
 
 # Configure libcocos2d:

@@ -2,13 +2,12 @@
 
 #include "cocos2d.h"
 
-class SplashScene : public cocos2d::Scene {
+class SplashScene : public cocos2d::Scene
+{
 public:
-    static cocos2d::Scene *CreateScene();
+    CREATE_FUNC(SplashScene)
 
-    virtual bool init();
-
-    CREATE_FUNC(SplashScene);
+    virtual bool init() override;
 private:
-    void StartMainScene(float Delta);
+    void startMainScene(float delta);
 };
