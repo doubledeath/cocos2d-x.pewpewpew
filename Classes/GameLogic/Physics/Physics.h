@@ -5,6 +5,7 @@
 #include "Movable.h"
 #include "Damageable.h"
 #include "Projectile.h"
+#include "Resolvable.h"
 #include "CollidableType.h"
 #include "CollidableTypeMask.h"
 
@@ -54,10 +55,30 @@ private:
     std::vector<Collidable *> searchCollidedList(Collidable *collidable, cocos2d::Rect rect, std::vector<Collidable *> targetList);
     cocos2d::Rect computeTunnelRect(cocos2d::Rect collidableRect, cocos2d::Rect collidablePastRect);
     /**
-     * @brief resolving collision between movable and it's collided
-     * @param movable which will be moved for resolve collisions
+     * @brief resolving something between collidable and it's collided
+     * @param collidable
      * @param collided
      */
-    void resolveCollision(Movable *movable, Collidable *collided);
+    void resolve(Collidable *collidable, Collidable *collided);
+    /**
+     * @brief resolving collision between resolvable and it's collided
+     * @param resolvable
+     * @param collided
+     */
+    void resolveCollision(Resolvable *resolvable, Collidable *collided);
+    /**
+     * @brief resolving damage between resolvable and it's collided
+     * @param damageable
+     * @param projectile
+     */
     void resolveDamage(Damageable *damageable, Projectile *projectile);
+    /**
+     * @brief resolving rotation between movable and it's collided
+     * @param movable
+     * @param collided
+     * @param isOnlyOneContainer needed for check default or container handling
+     * @param resolveChangeX needed to compute rotation
+     * @param resolveChangeY needed to compute rotation
+     */
+    void resolveRotation(Movable *movable, Collidable *collided, bool isOnlyOneContainer, float resolveChangeX, float resolveChangeY);
 };

@@ -7,12 +7,12 @@ namespace WorldConsts
     namespace World
     {
         const float TOUCH_OR_CLICK_DISTANCE = 10;
-        const float LONG_TOUCH_OR_CLICK_TIME = 1000; // Milliseconds
+        const float LONG_TOUCH_OR_CLICK_TIME = 500; // Milliseconds
         const cocos2d::Color4F BACKGROUND_COLOR(cocos2d::Color4B(0x9C, 0xCC, 0x65, 0xFF));
     }
     namespace Enemy
     {
-        const int SPAWN_COUNT = 5;
+        const int SPAWN_COUNT = 7;
         const float SPAWN_INTERVAL = 0.3;
         const float SPAWN_DELAY = 1;
         const std::string SPAWN_KEY = "spawnEnemies";

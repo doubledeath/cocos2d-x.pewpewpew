@@ -13,21 +13,6 @@ void MovableSprite::onCollisionResolved()
     Movable::onCollisionResolved();
 }
 
-void MovableSprite::moveBy(Vec2 moveChange, int moveVelocity, CallFunc *onMovedBy)
-{
-    auto moveBy = MoveBy::create(getMoveDuration(moveVelocity), moveChange);
-    auto moveByAndNotify = Sequence::create(moveBy, onMovedBy, nullptr);
-
-    moveByAndNotify->setTag(PhysicsConsts::MovableSprite::MOVE_BY_TAG);
-
-    runAction(moveByAndNotify);
-}
-
-void MovableSprite::interruptMoveBy()
-{
-    stopActionByTag(PhysicsConsts::MovableSprite::MOVE_BY_TAG);
-}
-
 void MovableSprite::moveToRotation()
 {
     auto moveToRotation = MoveBy::create(getMoveDuration(getMoveVelocity()), getMoveChange());

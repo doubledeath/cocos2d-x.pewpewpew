@@ -63,8 +63,8 @@ void Physics::update(float delta)
         if (!mOnCollidedMap[resolvingPair.first])
         {
             mOnCollidedMap[resolvingPair.first] = true;
-            // Now only for movable we can resolve collision
-            if (auto movable = dynamic_cast<Movable *>(resolvingPair.first)) { resolveCollision(movable, resolvingPair.second); }
+            // Now we can resolve something
+            resolve(resolvingPair.first, resolvingPair.second);
         }
     }
     for (auto &&onCollisionResolvedPair : mOnCollisionResolvedMap)
@@ -229,32 +229,35 @@ Rect Physics::computeTunnelRect(Rect collidableRect, Rect collidablePastRect)
     return collidableRect.unionWithRect(collidablePastRect);
 }
 
-void Physics::resolveCollision(Movable *movable, Collidable *collided)
+void Physics::resolve(Collidable *collidable, Collidable *collided)
+{
+    auto damageable = dynamic_cast<Damageable *>(collidable);
+    auto projectile = dynamic_cast<Projectile *>(collided);
+
+    if (damageable && projectile) { resolveDamage(damageable, projectile); }
+    else if (auto resolvable = dynamic_cast<Resolvable *>(collidable)) { resolveCollision(resolvable, collided); }
+}
+
+void Physics::resolveCollision(Resolvable *resolvable, Collidable *collided)
 {
     static const float floatComparsionError = 0.000001f;
     static const float resolveChangeError = 2;
-    static const float orientationDifferenceError = 2;
-
-    auto damageable = dynamic_cast<Damageable *>(movable);
-    auto projectile = dynamic_cast<Projectile *>(collided);
-    // If projectile dealing damage, no need to interrupt movable or resolve collision, just resolve damage
-    if (damageable && projectile) { resolveDamage(damageable, projectile); return; }
-    // If moving, interrupt it, probably it's prev collision resolving action
-    movable->interruptMoveBy();
+    // Interrupt resolving, probably it's prev collision resolving action
+    resolvable->interruptResolving();
 
     float resolveChangeX = 0, resolveChangeY = 0;
     //---Compute resolve change
-    auto isMovableContainer = movable->getType() == static_cast<int>(CollidableType::container);
+    auto isResolvableContainer = resolvable->getType() == static_cast<int>(CollidableType::container);
     auto isCollidedContainer = collided->getType() == static_cast<int>(CollidableType::container);
-    auto isOnlyOneContainer = isMovableContainer ^ isCollidedContainer;
-    auto movableRect = movable->getRect();
+    auto isOnlyOneContainer = isResolvableContainer ^ isCollidedContainer;
+    auto resolvableRect = resolvable->getRect();
     auto collidedRect = collided->getRect();
     // Special handling one container and other is not
     if (isOnlyOneContainer)
     {
         // Detect which one is container
-        auto containerRect = isMovableContainer ? movableRect : collidedRect;
-        auto nonContainerRect = isCollidedContainer ? movableRect : collidedRect;
+        auto containerRect = isResolvableContainer ? resolvableRect : collidedRect;
+        auto nonContainerRect = isCollidedContainer ? resolvableRect : collidedRect;
         // If container smaller then non-container, they have to use default handling
         if (nonContainerRect.size.width >= containerRect.size.width || nonContainerRect.size.height >= containerRect.size.height)
         {
@@ -266,57 +269,105 @@ void Physics::resolveCollision(Movable *movable, Collidable *collided)
             if (isCollidedContainer)
             {
                 // Compute difference of out sides + error with same sign
-                if (movableRect.getMaxX() > collidedRect.getMaxX()) { resolveChangeX = collidedRect.getMaxX() - movableRect.getMaxX() - resolveChangeError; }
-                else if (movableRect.getMinX() < collidedRect.getMinX()) { resolveChangeX = collidedRect.getMinX() - movableRect.getMinX() + resolveChangeError; }
+                if (resolvableRect.getMaxX() > collidedRect.getMaxX()) { resolveChangeX = collidedRect.getMaxX() - resolvableRect.getMaxX() - resolveChangeError; }
+                else if (resolvableRect.getMinX() < collidedRect.getMinX()) { resolveChangeX = collidedRect.getMinX() - resolvableRect.getMinX() + resolveChangeError; }
 
-                if (movableRect.getMaxY() > collidedRect.getMaxY()) { resolveChangeY = collidedRect.getMaxY() - movableRect.getMaxY() - resolveChangeError; }
-                else if (movableRect.getMinY() < collidedRect.getMinY()) { resolveChangeY = collidedRect.getMinY() - movableRect.getMinY() + resolveChangeError; }
-                // If movable just stay it never resolve collisions, let's move it anyway,
-                // on random value dirty solution, but it seems to be worked
+                if (resolvableRect.getMaxY() > collidedRect.getMaxY()) { resolveChangeY = collidedRect.getMaxY() - resolvableRect.getMaxY() - resolveChangeError; }
+                else if (resolvableRect.getMinY() < collidedRect.getMinY()) { resolveChangeY = collidedRect.getMinY() - resolvableRect.getMinY() + resolveChangeError; }
+                // If resolvable just stay it never resolve collisions, let's change it anyway,
+                // on random value, dirty solution, but it seems to be worked
                 if (std::abs(0 - resolveChangeX) < floatComparsionError && std::abs(0 - resolveChangeY) < floatComparsionError)
                 {
-                    int indexOfMovable = std::find(mCollidableList.begin(), mCollidableList.end(), movable) - mCollidableList.begin();
+                    int indexOfMovable = std::find(mCollidableList.begin(), mCollidableList.end(), resolvable) - mCollidableList.begin();
                     int indexOfCollided = std::find(mCollidableList.begin(), mCollidableList.end(), collided) - mCollidableList.begin();
                     int randomChange = RandomHelper::random_int(1, 8);
 
                     resolveChangeX = resolveChangeY = indexOfMovable > indexOfCollided ? -randomChange : randomChange;
                 }
             }
-            // If movable is container no need to move it, we not react inside collisions
+            // If resolvable is container no need to move it, we not react inside collisions
         }
     }
     // Default handling
     if (!isOnlyOneContainer)
     {
         // Compute difference of inversed sides + error with same sign
-        if (movableRect.getMinX() < collidedRect.getMaxX() && movableRect.getMaxX() > collidedRect.getMaxX())
+        if (resolvableRect.getMinX() < collidedRect.getMaxX() && resolvableRect.getMaxX() > collidedRect.getMaxX())
         {
-            resolveChangeX = collidedRect.getMaxX() - movableRect.getMinX() + resolveChangeError;
+            resolveChangeX = collidedRect.getMaxX() - resolvableRect.getMinX() + resolveChangeError;
         }
-        else if (movableRect.getMaxX() < collidedRect.getMaxX() && movableRect.getMaxX() > collidedRect.getMinX())
+        else if (resolvableRect.getMaxX() < collidedRect.getMaxX() && resolvableRect.getMaxX() > collidedRect.getMinX())
         {
-            resolveChangeX = collidedRect.getMinX() - movableRect.getMaxX() - resolveChangeError;
+            resolveChangeX = collidedRect.getMinX() - resolvableRect.getMaxX() - resolveChangeError;
         }
 
-        if (movableRect.getMinY() < collidedRect.getMaxY() && movableRect.getMaxY() > collidedRect.getMaxY())
+        if (resolvableRect.getMinY() < collidedRect.getMaxY() && resolvableRect.getMaxY() > collidedRect.getMaxY())
         {
-            resolveChangeY = collidedRect.getMaxY() - movableRect.getMinY() + resolveChangeError;
+            resolveChangeY = collidedRect.getMaxY() - resolvableRect.getMinY() + resolveChangeError;
         }
-        else if (movableRect.getMaxY() < collidedRect.getMaxY() && movableRect.getMaxY() > collidedRect.getMinY())
+        else if (resolvableRect.getMaxY() < collidedRect.getMaxY() && resolvableRect.getMaxY() > collidedRect.getMinY())
         {
-            resolveChangeY = collidedRect.getMinY() - movableRect.getMaxY() - resolveChangeError;
+            resolveChangeY = collidedRect.getMinY() - resolvableRect.getMaxY() - resolveChangeError;
         }
         // Duplicate of upper code because not in all situations we need change resolvechange vars
         if (std::abs(0 - resolveChangeX) < floatComparsionError && std::abs(0 - resolveChangeY) < floatComparsionError)
         {
-            int indexOfMovable = std::find(mCollidableList.begin(), mCollidableList.end(), movable) - mCollidableList.begin();
+            int indexOfMovable = std::find(mCollidableList.begin(), mCollidableList.end(), resolvable) - mCollidableList.begin();
             int indexOfCollided = std::find(mCollidableList.begin(), mCollidableList.end(), collided) - mCollidableList.begin();
             int randomChange = RandomHelper::random_int(1, 8);
 
             resolveChangeX = resolveChangeY = indexOfMovable > indexOfCollided ? -randomChange : randomChange;
         }
+        // Do this a little smoother, duplicate axises and add
+        // a random change to not cycling computing
+        if (std::abs(resolveChangeX) < std::abs(resolveChangeY))
+        {
+            int randomChange = RandomHelper::random_int(1, 4);
+
+            resolveChangeX += resolveChangeX < 0 ? -randomChange : randomChange;
+            resolveChangeY = resolveChangeY < 0 ? -std::abs(resolveChangeX) : std::abs(resolveChangeX);
+        }
+        else if (std::abs(resolveChangeX) > std::abs(resolveChangeY))
+        {
+            int randomChange = RandomHelper::random_int(1, 4);
+
+            resolveChangeY += resolveChangeY < 0 ? -randomChange : randomChange;
+            resolveChangeX = resolveChangeX < 0 ? -std::abs(resolveChangeY) : std::abs(resolveChangeY);
+        }
     }
-    //---Apply a new move rotation
+    auto baseResolveVelocity = PhysicsConsts::Resolvable::BASE_RESOLVE_COLLISION_VELOCITY;
+    //---Resolve rotation collision for movable
+    // If resolvable is container no need to rotate it, we not react inside collisions
+    // but if they are both containers, we need to handle it default way
+    if (auto movable = dynamic_cast<Movable *>(resolvable))
+    {
+        resolveRotation(movable, collided, isOnlyOneContainer, resolveChangeX, resolveChangeY);
+        // Let's scale resolve velocity by movable velocity
+        baseResolveVelocity = movable->getMoveVelocity();
+    }
+    //---Start resolving
+    auto resolveVelocity = baseResolveVelocity * PhysicsConsts::Resolvable::RESOLVE_COLLISION_VELOCITY_FACTOR;
+
+    resolvable->resolve(Vec2(resolveChangeX, resolveChangeY), resolveVelocity, CallFunc::create([=]()
+    {
+        auto collided = searchCollided(resolvable, resolvable->getRect());
+
+        if (collided && mPostResolvingMap.find(resolvable) == mPostResolvingMap.end()) { mPostResolvingMap[resolvable] = collided; }
+    }));
+}
+
+void Physics::resolveDamage(Damageable *damageable, Projectile *projectile)
+{
+    damageable->applyDamage(projectile->getDamage());
+}
+
+void Physics::resolveRotation(Movable *movable, Collidable *collided, bool isOnlyOneContainer, float resolveChangeX, float resolveChangeY)
+{
+    static const float orientationDifferenceError = 2;
+
+    auto isMovableContainer = movable->getType() == static_cast<int>(CollidableType::container);
+    auto movableRect = movable->getRect();
+    auto collidedRect = collided->getRect();
     // If movable is container no need to rotate it, we not react inside collisions
     // but if they are both containers, we need to handle it default way
     if (!isMovableContainer || !isOnlyOneContainer)
@@ -360,17 +411,4 @@ void Physics::resolveCollision(Movable *movable, Collidable *collided)
             movable->setMoveRotation(newMoveRotation);
         }
     }
-    auto resolveVelocity = movable->getMoveVelocity() * PhysicsConsts::Movable::RESOLVE_COLLISION_VELOCITY_FACTOR;
-    //---Start resolving move
-    movable->moveBy(Vec2(resolveChangeX, resolveChangeY), resolveVelocity, CallFunc::create([=]()
-    {
-        auto collided = searchCollided(movable, movable->getRect());
-
-        if (collided && mPostResolvingMap.find(movable) == mPostResolvingMap.end()) { mPostResolvingMap[movable] = collided; }
-    }));
-}
-
-void Physics::resolveDamage(Damageable *damageable, Projectile *projectile)
-{
-    damageable->applyDamage(projectile->getDamage());
 }

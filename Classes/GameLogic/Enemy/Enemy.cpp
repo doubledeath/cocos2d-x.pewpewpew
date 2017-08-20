@@ -65,7 +65,7 @@ void Enemy::onDamaged()
 
 void Enemy::onDead()
 {
-    interruptMoveBy();
+    interruptResolving();
     interruptMoveToRotation();
 
     runAction(RemoveSelf::create(true));

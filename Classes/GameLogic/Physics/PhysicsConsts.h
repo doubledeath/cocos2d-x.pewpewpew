@@ -4,14 +4,15 @@
 
 namespace PhysicsConsts
 {
-    namespace Movable
+    namespace Resolvable
     {
+        const int BASE_RESOLVE_COLLISION_VELOCITY = 2000;
         const int RESOLVE_COLLISION_VELOCITY_FACTOR = 500;
     }
     namespace MovableSprite
     {
-        const int MOVE_BY_TAG = 1301;
-        const int MOVE_TO_ROTATION_TAG = 1302;
+        const int RESOLVE_TAG = 1801;
+        const int MOVE_TO_ROTATION_TAG = 1301;
     }
     namespace Projectile
     {

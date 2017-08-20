@@ -1,11 +1,11 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "GameLogic/Physics/MovableSprite.h"
+#include "GameLogic/Physics/MRSprite.h"
 #include "GameLogic/Physics/Damageable.h"
 #include "EnemyConsts.h"
 
-class Enemy : public virtual MovableSprite, public virtual Damageable
+class Enemy : public virtual MRSprite, public virtual Damageable
 {
 public:
     Enemy();

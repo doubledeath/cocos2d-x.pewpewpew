@@ -13,8 +13,6 @@ public:
     virtual int getMoveVelocity() const = 0;
     virtual int getMoveDistance() const = 0;
     virtual void setMoveRotation(int moveRotation) = 0;
-    virtual void moveBy(cocos2d::Vec2 moveChange, int moveVelocity, cocos2d::CallFunc *onMovedBy) = 0;
-    virtual void interruptMoveBy() = 0;
 protected:
     virtual void moveToRotation() = 0;
     virtual void interruptMoveToRotation() = 0;

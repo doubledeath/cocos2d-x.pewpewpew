@@ -34,7 +34,7 @@ int Projectile::getMoveDistance() const
 
 void Projectile::setMoveRotation(int moveRotation)
 {
-    // Remove controlled change of move rotation
+    mMoveRotation = moveRotation;
 }
 
 int Projectile::getDamage() const
@@ -64,18 +64,9 @@ void Projectile::setDamage(int damage)
 
 void Projectile::onSpawned(int initMoveRotation, std::vector<Collidable *> pierceableList)
 {
-    mMoveRotation = initMoveRotation;
+    setMoveRotation(initMoveRotation);
+
     mPierceableList = pierceableList;
 
     moveToRotation();
-}
-
-void Projectile::moveBy(Vec2 moveChange, int moveVelocity, CallFunc *onMovedBy)
-{
-    // Remove controlled move of projectile
-}
-
-void Projectile::interruptMoveBy()
-{
-    // If we can't move it moveBy nothing to interrupt
 }

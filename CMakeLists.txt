@@ -134,6 +134,7 @@ set(GAME_SRC
         Classes/GameLogic/Physics/Damageable.cpp
         Classes/GameLogic/Physics/Movable.cpp
         Classes/GameLogic/Physics/MovableSprite.cpp
+        Classes/GameLogic/Physics/MRSprite.cpp
         Classes/GameLogic/Physics/ParentCollidable.cpp
         Classes/GameLogic/Physics/Physics.cpp
         Classes/GameLogic/Physics/Projectile.cpp
@@ -158,10 +159,12 @@ set(GAME_HEADERS
         Classes/GameLogic/Physics/Damageable.h
         Classes/GameLogic/Physics/Movable.h
         Classes/GameLogic/Physics/MovableSprite.h
+        Classes/GameLogic/Physics/MRSprite.h
         Classes/GameLogic/Physics/ParentCollidable.h
         Classes/GameLogic/Physics/Physics.h
         Classes/GameLogic/Physics/PhysicsConsts.h
         Classes/GameLogic/Physics/Projectile.h
+        Classes/GameLogic/Physics/Resolvable.h
         Classes/GameLogic/Player/Cannon.h
         Classes/GameLogic/Player/Player.h
         Classes/GameLogic/Player/PlayerConsts.h
