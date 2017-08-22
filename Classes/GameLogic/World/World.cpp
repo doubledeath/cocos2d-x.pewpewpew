@@ -201,6 +201,7 @@ void World::spawnPlayer()
         addChild(cannonBall);
         mPhysics->addCollidable(cannonBall);
     });
+    cannon->setParticleApplierDelegate([=](ParticleSystem *particle) { addChild(particle); });
 
     addChild(mPlayer = cannon);
 }
@@ -218,7 +219,7 @@ void World::spawnBalloon()
     addChild(balloon);
     mPhysics->addCollidable(balloon);
 
-    balloon->onSpawned();
+    balloon->onSpawned([=](ParticleSystem *particle) { addChild(particle); });
 }
 
 void World::spawnEnemies()

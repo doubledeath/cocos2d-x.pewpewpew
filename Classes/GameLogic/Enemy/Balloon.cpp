@@ -11,3 +11,27 @@ bool Balloon::init()
 
     return true;
 }
+
+void Balloon::onSpawned(std::function<void (ParticleSystem *)> particleApplierDelegate)
+{
+    mParticleApplierDelegate = particleApplierDelegate;
+
+    Enemy::onSpawned();
+}
+
+void Balloon::onDead()
+{
+    Enemy::onDead();
+
+    if (mParticleApplierDelegate)
+    {
+        auto explosion = ParticleSystemQuad::create(EnemyConsts::Balloon::EXPLOSION_PLIST);
+
+        explosion->setAutoRemoveOnFinish(true);
+        explosion->setPosition(getPosition());
+        explosion->setScale(EnemyConsts::Balloon::EXPLOSION_SCALE);
+
+        mParticleApplierDelegate(explosion);
+        mParticleApplierDelegate = nullptr;
+    }
+}

@@ -231,10 +231,10 @@ Rect Physics::computeTunnelRect(Rect collidableRect, Rect collidablePastRect)
 
 void Physics::resolve(Collidable *collidable, Collidable *collided)
 {
-    auto damageable = dynamic_cast<Damageable *>(collidable);
-    auto projectile = dynamic_cast<Projectile *>(collided);
+    auto projectile = dynamic_cast<Projectile *>(collidable);
+    auto damageable = dynamic_cast<Damageable *>(collided);
 
-    if (damageable && projectile) { resolveDamage(damageable, projectile); }
+    if (projectile && damageable) { resolveDamage(projectile, damageable); }
     else if (auto resolvable = dynamic_cast<Resolvable *>(collidable)) { resolveCollision(resolvable, collided); }
 }
 
@@ -356,7 +356,7 @@ void Physics::resolveCollision(Resolvable *resolvable, Collidable *collided)
     }));
 }
 
-void Physics::resolveDamage(Damageable *damageable, Projectile *projectile)
+void Physics::resolveDamage(Projectile *projectile, Damageable *damageable)
 {
     damageable->applyDamage(projectile->getDamage());
 }

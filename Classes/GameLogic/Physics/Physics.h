@@ -67,11 +67,11 @@ private:
      */
     void resolveCollision(Resolvable *resolvable, Collidable *collided);
     /**
-     * @brief resolving damage between resolvable and it's collided
-     * @param damageable
+     * @brief resolving damage between projectile and damageable
      * @param projectile
+     * @param damageable
      */
-    void resolveDamage(Damageable *damageable, Projectile *projectile);
+    void resolveDamage(Projectile *projectile, Damageable *damageable);
     /**
      * @brief resolving rotation between movable and it's collided
      * @param movable

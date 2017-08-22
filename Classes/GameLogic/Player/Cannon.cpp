@@ -44,6 +44,11 @@ void Cannon::setGetCannonBallPierceableListDelegate(const std::function<std::vec
     mGetCannonBallPierceableListDelegate = getCannonBallPierceableListDelegate;
 }
 
+void Cannon::setParticleApplierDelegate(const std::function<void (ParticleSystem *cannonBallTrail)> &particleApplierDelegate)
+{
+    mParticleApplierDelegate = particleApplierDelegate;
+}
+
 void Cannon::rotate(Vec2 location)
 {
     // Rotate cannon if possible
@@ -74,7 +79,7 @@ void Cannon::pew()
 
         mAddToWorldDelegate(cannonBall);
 
-        cannonBall->onSpawned(getRotation(), cannonBallPierceableList);
+        cannonBall->onSpawned(getRotation(), cannonBallPierceableList, mParticleApplierDelegate);
 
         scheduleOnce([=](float delta) { onReloaded(); }, PlayerConsts::Cannon::RELOAD_DURATION, PlayerConsts::Cannon::PEW_KEY);
     }

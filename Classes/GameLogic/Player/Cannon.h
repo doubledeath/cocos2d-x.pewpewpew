@@ -19,11 +19,13 @@ public:
 
     virtual void setAddToWorldDelegate(const std::function<void (CannonBall *cannonBall)> &addToWorldDelegate);
     virtual void setGetCannonBallPierceableListDelegate(const std::function<std::vector<Collidable *> ()> &getCannonBallPierceableListDelegate);
+    virtual void setParticleApplierDelegate(const std::function<void (cocos2d::ParticleSystem *particle)> &particleApplierDelegate);
 private:
     bool mIsReloading = false;
     bool mIsRotating = false;
     std::function<void (CannonBall *cannonBall)> mAddToWorldDelegate = nullptr;
     std::function<std::vector<Collidable *> ()> mGetCannonBallPierceableListDelegate = nullptr;
+    std::function<void (cocos2d::ParticleSystem *cannonBallTrail)> mParticleApplierDelegate = nullptr;
 
     void rotate(cocos2d::Vec2 location);
     void pew();

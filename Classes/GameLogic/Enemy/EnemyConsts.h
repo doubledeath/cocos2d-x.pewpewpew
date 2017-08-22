@@ -14,5 +14,7 @@ namespace EnemyConsts
     namespace Balloon
     {
         const std::string TEXTURE = "Texture/Enemy/Balloon.png";
+        const std::string EXPLOSION_PLIST = "Particle/Projectile/BalloonExplosion.plist";
+        const float EXPLOSION_SCALE = 0.3;
     }
 }
