@@ -8,41 +8,15 @@ Enemy::Enemy()
 {
     setType(static_cast<int>(CollidableType::base));
     setTypeMask(static_cast<int>(CollidableTypeMask::base));
-}
 
-int Enemy::getMoveRotation() const
-{
-    return mMoveRotation;
-}
-
-int Enemy::getMoveVelocity() const
-{
-    return mMoveVelocity;
-}
-
-int Enemy::getMoveDistance() const
-{
-    return mMoveDistance;
-}
-
-void Enemy::setMoveRotation(int moveRotation)
-{
-    mMoveRotation = moveRotation;
+    setMoveRotation(EnemyConsts::Enemy::INIT_MOVE_ROTATION);
+    setMoveVelocity(EnemyConsts::Enemy::INIT_MOVE_VELOCITY);
+    setMoveDistance(EnemyConsts::Enemy::INIT_MOVE_DISTANCE);
 }
 
 int Enemy::getHitPoints() const
 {
     return mHitPoints;
-}
-
-void Enemy::setMoveVelocity(int moveVelocity)
-{
-    mMoveVelocity = moveVelocity;
-}
-
-void Enemy::setMoveDistance(int moveDistance)
-{
-    mMoveDistance = moveDistance;
 }
 
 void Enemy::onSpawned()

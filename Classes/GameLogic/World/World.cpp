@@ -19,6 +19,8 @@ bool World::init()
 
     setPosition(origin.x, origin.y);
     setContentSize(Director::getInstance()->getVisibleSize());
+    // Prevent first touch or click seems as double one
+    mLastTouchOrClickInfo.eventStartMillis = WorldConsts::World::DOUBLE_TOUCH_OR_CLICK_TIME * 2;
 
     createPhysics();
     createEnvoirment();
@@ -43,9 +45,7 @@ void World::removeChild(Node *child, bool cleanup)
 
 void World::touchOrClickEventDown(Touch *touch, EventMouse *eventMouse)
 {
-    if (mTouchOrClickInfo.eventStarted || (touch == nullptr && eventMouse == nullptr)) {
-        return;
-    }
+    if (mTouchOrClickInfo.eventStarted || (touch == nullptr && eventMouse == nullptr)) { return;}
 
     auto currentTime = std::chrono::system_clock::now().time_since_epoch();
 
@@ -56,27 +56,54 @@ void World::touchOrClickEventDown(Touch *touch, EventMouse *eventMouse)
 
 void World::touchOrClickEventUp(Touch *touch, EventMouse *eventMouse)
 {
-    if (mTouchOrClickInfo.eventStarted && (touch != nullptr || eventMouse != nullptr)) {
+    if (mTouchOrClickInfo.eventStarted && (touch != nullptr || eventMouse != nullptr))
+    {
         auto currentLocation = touch != nullptr ? touch->getLocation() : eventMouse->getLocation();
 
-        if (mTouchOrClickInfo.eventStartLocation.distance(currentLocation) < WorldConsts::World::TOUCH_OR_CLICK_DISTANCE) {
+        if (mTouchOrClickInfo.eventStartLocation.distance(currentLocation) < WorldConsts::World::SINGLE_TOUCH_OR_CLICK_DISTANCE)
+        {
             auto currentTime = std::chrono::system_clock::now().time_since_epoch();
             long currentMillis = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime).count();
+            auto currentDiff = currentMillis - mTouchOrClickInfo.eventStartMillis;
 
-            if (currentMillis - mTouchOrClickInfo.eventStartMillis > WorldConsts::World::LONG_TOUCH_OR_CLICK_TIME) {
+            if (currentDiff > WorldConsts::World::LONG_TOUCH_OR_CLICK_TIME)
+            {
                 onLongTouchOrClick(currentLocation);
-            } else {
-                onTouchOrClick(currentLocation);
             }
+            else
+            {
+                auto lastDiff = mTouchOrClickInfo.eventStartMillis - mLastTouchOrClickInfo.eventStartMillis;
+
+                if (lastDiff < WorldConsts::World::DOUBLE_TOUCH_OR_CLICK_TIME)
+                {
+                    unschedule(WorldConsts::World::SINGLE_TOUCH_OR_CLICK_KEY);
+
+                    onDoubleTouchOrClick(currentLocation);
+                }
+                else
+                {
+                    unschedule(WorldConsts::World::SINGLE_TOUCH_OR_CLICK_KEY);
+                    scheduleOnce([=](float delta) { onSingleTouchOrClick(currentLocation); },
+                        WorldConsts::World::DOUBLE_TOUCH_OR_CLICK_TIME / 1000, // Convert to seconds
+                        WorldConsts::World::SINGLE_TOUCH_OR_CLICK_KEY);
+                }
+            }
+
+            mLastTouchOrClickInfo.eventStartMillis = mTouchOrClickInfo.eventStartMillis;
         }
 
         mTouchOrClickInfo.eventStarted = false;
     }
 }
 
-void World::onTouchOrClick(Vec2 location)
+void World::onSingleTouchOrClick(Vec2 location)
 {
-    mPlayer->onWorldTouchOrClick(convertToNodeSpace(location));
+    mPlayer->onWorldSingleTouchOrClick(convertToNodeSpace(location));
+}
+
+void World::onDoubleTouchOrClick(Vec2 location)
+{
+    mPlayer->onWorldDoubleTouchOrClick(convertToNodeSpace(location));
 }
 
 void World::onLongTouchOrClick(Vec2 location)
@@ -95,14 +122,12 @@ void World::createEnvoirment()
 {
     auto origin = Director::getInstance()->getVisibleOrigin();
     auto size = Director::getInstance()->getVisibleSize();
-    auto background = DrawNode::create();
     auto worldZone = CollidableNode::create();
     auto enemyZone = CollidableNode::create();
     auto enemyZoneX = origin.x;
     auto enemyZoneY = origin.y + size.height * WorldConsts::Enemy::ZONE_BOTTOM_FACTOR;
     auto enemyZoneWidth = size.width * WorldConsts::Enemy::ZONE_WIDTH_FACTOR;
     auto enemyZoneHeight = size.height * (1 - WorldConsts::Enemy::ZONE_BOTTOM_FACTOR);
-    auto enemyZoneBackground = DrawNode::create();
 
     worldZone->setType(static_cast<int>(CollidableType::container));
     worldZone->setTypeMask(static_cast<int>(CollidableTypeMask::container));
@@ -122,11 +147,16 @@ void World::createEnvoirment()
     addChild(enemyZone);
     mPhysics->addCollidable(enemyZone);
 
-    background->drawSolidRect(origin, size, WorldConsts::World::BACKGROUND_COLOR);
-    enemyZoneBackground->drawSolidRect(enemyZone->getPosition(), size, WorldConsts::Enemy::ZONE_BACKGROUND_COLOR);
+    auto grassAndSky = TMXTiledMap::create(WorldConsts::Enviorment::GRASS_AND_SKY_TMX);
 
-    addChild(background);
-    addChild(enemyZoneBackground);
+    grassAndSky->setScale(WorldConsts::Enviorment::GRASS_AND_SKY_SCALE);
+
+    auto grassAndSkyX = origin.x - grassAndSky->getBoundingBox().size.width * WorldConsts::Enviorment::GRASS_AND_SKY_LEFT_FACTOR;
+    auto grassAndSkyY = origin.y - size.height * (1 - WorldConsts::Enviorment::GRASS_AND_SKY_BOTTOM_FACTOR);
+
+    grassAndSky->setPosition(grassAndSkyX, grassAndSkyY);
+
+    addChild(grassAndSky);
 }
 
 void World::addEventDispatcher()

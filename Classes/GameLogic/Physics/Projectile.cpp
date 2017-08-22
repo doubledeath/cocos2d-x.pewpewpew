@@ -8,33 +8,17 @@ Projectile::Projectile()
 {
     setType(static_cast<int>(CollidableType::projectile));
     setTypeMask(static_cast<int>(CollidableTypeMask::projectile));
+
+    setMoveRotation(PhysicsConsts::Projectile::INIT_MOVE_ROTATION);
+    setMoveVelocity(PhysicsConsts::Projectile::INIT_MOVE_VELOCITY);
+    setMoveDistance(PhysicsConsts::Projectile::INIT_MOVE_DISTANCE);
 }
 
 void Projectile::onCollided()
 {
-    interruptMoveToRotation();
+    MovableSprite::onCollided();
 
     runAction(RemoveSelf::create(true));
-}
-
-int Projectile::getMoveRotation() const
-{
-    return mMoveRotation;
-}
-
-int Projectile::getMoveVelocity() const
-{
-    return mMoveVelocity;
-}
-
-int Projectile::getMoveDistance() const
-{
-    return mMoveDistance;
-}
-
-void Projectile::setMoveRotation(int moveRotation)
-{
-    mMoveRotation = moveRotation;
 }
 
 int Projectile::getDamage() const
@@ -45,16 +29,6 @@ int Projectile::getDamage() const
 std::vector<Collidable *> Projectile::getPierceableList() const
 {
     return mPierceableList;
-}
-
-void Projectile::setMoveVelocity(int moveVelocity)
-{
-    mMoveVelocity = moveVelocity;
-}
-
-void Projectile::setMoveDistance(int moveDistance)
-{
-    mMoveDistance = moveDistance;
 }
 
 void Projectile::setDamage(int damage)

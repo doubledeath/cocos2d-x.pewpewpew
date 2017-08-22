@@ -6,9 +6,17 @@ namespace WorldConsts
 {
     namespace World
     {
-        const float TOUCH_OR_CLICK_DISTANCE = 10;
-        const float LONG_TOUCH_OR_CLICK_TIME = 500; // Milliseconds
-        const cocos2d::Color4F BACKGROUND_COLOR(cocos2d::Color4B(0x9C, 0xCC, 0x65, 0xFF));
+        const float SINGLE_TOUCH_OR_CLICK_DISTANCE = 10;
+        const float DOUBLE_TOUCH_OR_CLICK_TIME = 200; // Milliseconds
+        const float LONG_TOUCH_OR_CLICK_TIME = 600; // Milliseconds
+        const std::string SINGLE_TOUCH_OR_CLICK_KEY = "singleTouchOrClick";
+    }
+    namespace Enviorment
+    {
+        const std::string GRASS_AND_SKY_TMX = "Tmx/Envoirment/GrassAndSkyTilemap.tmx";
+        const float GRASS_AND_SKY_SCALE = 2;
+        const float GRASS_AND_SKY_LEFT_FACTOR = 0.27;
+        const float GRASS_AND_SKY_BOTTOM_FACTOR = 0.41;
     }
     namespace Enemy
     {
@@ -20,7 +28,6 @@ namespace WorldConsts
         const float SPAWN_Y_FACTOR = 0.8;
         const float ZONE_WIDTH_FACTOR = 1;
         const float ZONE_BOTTOM_FACTOR = 0.4;
-        const cocos2d::Color4F ZONE_BACKGROUND_COLOR(cocos2d::Color4B(0x29, 0xB6, 0xF6, 0xFF));
     }
     namespace Player
     {

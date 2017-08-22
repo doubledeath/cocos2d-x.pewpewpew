@@ -4,6 +4,11 @@
 
 USING_NS_CC;
 
+Cannon::Cannon()
+{
+    setLocalZOrder(PlayerConsts::Cannon::Z_ORDER);
+}
+
 bool Cannon::init()
 {
     if (!Sprite::initWithFile(PlayerConsts::Cannon::TEXTURE))
@@ -14,9 +19,14 @@ bool Cannon::init()
     return true;
 }
 
-void Cannon::onWorldTouchOrClick(Vec2 location)
+void Cannon::onWorldSingleTouchOrClick(Vec2 location)
 {
     pew();
+}
+
+void Cannon::onWorldDoubleTouchOrClick(Vec2 location)
+{
+    rotate(location);
 }
 
 void Cannon::onWorldLongTouchOrClick(Vec2 location)

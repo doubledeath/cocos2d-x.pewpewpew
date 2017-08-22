@@ -20,13 +20,15 @@ private:
     };
 
     TouchOrClickInfo mTouchOrClickInfo;
+    TouchOrClickInfo mLastTouchOrClickInfo;
     Physics *mPhysics;
     Collidable *mEnemyZone;
     Player *mPlayer;
 
     void touchOrClickEventDown(cocos2d::Touch *touch, cocos2d::EventMouse *eventMouse);
     void touchOrClickEventUp(cocos2d::Touch *touch, cocos2d::EventMouse *eventMouse);
-    void onTouchOrClick(cocos2d::Vec2 location);
+    void onSingleTouchOrClick(cocos2d::Vec2 location);
+    void onDoubleTouchOrClick(cocos2d::Vec2 location);
     void onLongTouchOrClick(cocos2d::Vec2 location);
     void createPhysics();
     void createEnvoirment();

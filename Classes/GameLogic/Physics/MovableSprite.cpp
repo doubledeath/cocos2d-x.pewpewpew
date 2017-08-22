@@ -13,6 +13,36 @@ void MovableSprite::onCollisionResolved()
     Movable::onCollisionResolved();
 }
 
+int MovableSprite::getMoveRotation() const
+{
+    return mMoveRotation;
+}
+
+int MovableSprite::getMoveVelocity() const
+{
+    return mMoveVelocity;
+}
+
+int MovableSprite::getMoveDistance() const
+{
+    return mMoveDistance;
+}
+
+void MovableSprite::setMoveRotation(int moveRotation)
+{
+    mMoveRotation = moveRotation;
+}
+
+void MovableSprite::setMoveVelocity(int moveVelocity)
+{
+    mMoveVelocity = moveVelocity;
+}
+
+void MovableSprite::setMoveDistance(int moveDistance)
+{
+    mMoveDistance = moveDistance;
+}
+
 void MovableSprite::moveToRotation()
 {
     auto moveToRotation = MoveBy::create(getMoveDuration(getMoveVelocity()), getMoveChange());

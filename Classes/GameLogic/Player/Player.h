@@ -5,6 +5,7 @@
 
 class Player : public cocos2d::Sprite {
 public:
-    virtual void onWorldTouchOrClick(cocos2d::Vec2 Location) = 0;
-    virtual void onWorldLongTouchOrClick(cocos2d::Vec2 Location) = 0;
+    virtual void onWorldSingleTouchOrClick(cocos2d::Vec2 location) = 0;
+    virtual void onWorldDoubleTouchOrClick(cocos2d::Vec2 location) = 0;
+    virtual void onWorldLongTouchOrClick(cocos2d::Vec2 location) = 0;
 };

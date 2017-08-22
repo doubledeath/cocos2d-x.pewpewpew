@@ -17,7 +17,7 @@ namespace PhysicsConsts
     namespace Projectile
     {
         const int INIT_MOVE_ROTATION = 0;
-        const int INIT_MOVE_VELOCITY = 200;
+        const int INIT_MOVE_VELOCITY = 600;
         const int INIT_MOVE_DISTANCE = 10000;
         const int BASE_DAMAGE = 1;
     }

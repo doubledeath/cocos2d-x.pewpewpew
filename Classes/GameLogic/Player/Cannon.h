@@ -9,9 +9,12 @@ class Cannon : public Player
 public:
     CREATE_FUNC(Cannon)
 
+    Cannon();
+
     virtual bool init();
 
-    virtual void onWorldTouchOrClick(cocos2d::Vec2 location);
+    virtual void onWorldSingleTouchOrClick(cocos2d::Vec2 location);
+    virtual void onWorldDoubleTouchOrClick(cocos2d::Vec2 location);
     virtual void onWorldLongTouchOrClick(cocos2d::Vec2 location);
 
     virtual void setAddToWorldDelegate(const std::function<void (CannonBall *cannonBall)> &addToWorldDelegate);
