@@ -7,6 +7,8 @@ class Balloon : public Enemy
 public:
     CREATE_FUNC(Balloon)
 
+    Balloon();
+
     virtual bool init() override;
 
     virtual void onSpawned(std::function<void (cocos2d::ParticleSystem *cannonBallTrail)> particleApplierDelegate);

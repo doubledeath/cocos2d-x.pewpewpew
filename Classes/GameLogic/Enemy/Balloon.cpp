@@ -2,6 +2,11 @@
 
 USING_NS_CC;
 
+Balloon::Balloon()
+{
+    setIsCircle(true);
+}
+
 bool Balloon::init()
 {
     if (!Enemy::initWithFile(EnemyConsts::Balloon::TEXTURE))

@@ -20,6 +20,11 @@ void ParentCollidable::onCollisionResolved()
 {
 }
 
+bool ParentCollidable::isCircle()
+{
+    return mIsCircle;
+}
+
 void ParentCollidable::setType(int type)
 {
     mType = type;
@@ -28,4 +33,9 @@ void ParentCollidable::setType(int type)
 void ParentCollidable::setTypeMask(int typeMask)
 {
     mTypeMask = typeMask;
+}
+
+void ParentCollidable::setIsCircle(bool isCircle)
+{
+    mIsCircle = isCircle;
 }

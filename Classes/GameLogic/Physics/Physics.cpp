@@ -215,8 +215,37 @@ std::vector<Collidable *> Physics::searchCollidedList(Collidable *collidable, Re
                         nonContainerRect.getMinY() <= containerRect.getMinY();
             }
         }
-        // Default handling, using built-in intersect algorithm
-        if (!isOnlyOneContainer) { isCollided = rect.intersectsRect(targetRect); }
+        // Default handling
+        if (!isOnlyOneContainer)
+        {
+            auto isAnyCircle = collidable->isCircle() || target->isCircle();
+
+            if (isAnyCircle)
+            {
+                if (collidable->isCircle() && target->isCircle())
+                {
+                    auto rectInnerCircleRadius = std::min(rect.size.width, rect.size.height) / 2;
+                    auto targetRectInnerCircleRadius = std::min(targetRect.size.width, targetRect.size.height) / 2;
+                    auto distanceBetweenCenters = Vec2(rect.getMidX(), rect.getMidY()).distance(Vec2(targetRect.getMidX(), targetRect.getMidY()));
+
+                    isCollided = distanceBetweenCenters <= rectInnerCircleRadius + targetRectInnerCircleRadius;
+                }
+                else
+                {
+                    // Detect which one is circle
+                    auto circleRect = collidable->isCircle() ? rect : targetRect;
+                    auto nonCircleRect = target->isCircle() ? rect : targetRect;
+                    auto circleRadius = std::min(circleRect.size.width, circleRect.size.height) / 2;
+
+                    isCollided = nonCircleRect.intersectsCircle(Vec2(circleRect.getMidX(), circleRect.getMidY()), circleRadius);
+                }
+            }
+            else
+            {// Using built-in intersect algorithm
+                isCollided = rect.intersectsRect(targetRect);
+            }
+        }
+
         if (isCollided) { collidedList.push_back(target); }
     }
 

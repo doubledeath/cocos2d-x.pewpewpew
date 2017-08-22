@@ -10,4 +10,5 @@ public:
     virtual int getTypeMask() const = 0;
     virtual void onCollided() = 0;
     virtual void onCollisionResolved() = 0;
+    virtual bool isCircle() = 0;
 };
