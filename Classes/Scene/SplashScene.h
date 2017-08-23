@@ -10,8 +10,6 @@ public:
 
     virtual bool init() override;
 private:
-    Config *mConfig;
-
     void loadConfig();
     void startMainScene(float delta);
 };

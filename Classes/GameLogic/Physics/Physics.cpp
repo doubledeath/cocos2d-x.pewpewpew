@@ -120,33 +120,64 @@ Collidable *Physics::searchCollided(Collidable *collidable, Rect rect)
     }
 
     auto collidedList = searchCollidedList(collidable, rect, targetList);
-    // We search first of all closest container,
-    // if there is no containers, closest non-container
-    // Container pass
-    for (auto collided : collidedList)
+    // For projectile damageables are more important then container
+    // Projectile pass
+    if (collidable->getType() == static_cast<int>(CollidableType::projectile))
     {
-        auto collidedRect = collided->getRect();
-        auto isCollidedContainer = collided->getType() == static_cast<int>(CollidableType::container);
-
-        if (isCollidedContainer)
+        for (auto collided : collidedList)
         {
-            auto leftDistance = std::abs(rect.getMinX() - collidedRect.getMaxX());
-            auto rightDistance = std::abs(rect.getMaxX() - collidedRect.getMinX());
-            auto topDistance = std::abs(rect.getMaxY() - collidedRect.getMinY());
-            auto bottomDistance = std::abs(rect.getMinY() - collidedRect.getMaxY());
+            auto collidedRect = collided->getRect();
+            auto isCollidedNonContainer = collided->getType() != static_cast<int>(CollidableType::container);
 
-            auto minVerticalDistance = std::min(topDistance, bottomDistance);
-            auto minHorizontalDistance = std::min(leftDistance, rightDistance);
-            auto minDistance = std::min(minVerticalDistance, minHorizontalDistance);
-            // If distance is closer
-            if (!found || minDistance < foundDistance)
+            if (isCollidedNonContainer)
             {
-                found = collided;
-                foundDistance = minDistance;
+                auto leftDistance = std::abs(rect.getMinX() - collidedRect.getMaxX());
+                auto rightDistance = std::abs(rect.getMaxX() - collidedRect.getMinX());
+                auto topDistance = std::abs(rect.getMaxY() - collidedRect.getMinY());
+                auto bottomDistance = std::abs(rect.getMinY() - collidedRect.getMaxY());
+
+                auto minVerticalDistance = std::min(topDistance, bottomDistance);
+                auto minHorizontalDistance = std::min(leftDistance, rightDistance);
+                auto minDistance = std::min(minVerticalDistance, minHorizontalDistance);
+                // If distance is closer
+                if (!found || minDistance < foundDistance)
+                {
+                    found = collided;
+                    foundDistance = minDistance;
+                }
             }
         }
     }
-    // Non-container pass, if not found on prev pass
+    // We search closest container,
+    // if there is no containers, closest non-container
+    // Container pass
+    if (!found)
+    {
+        for (auto collided : collidedList)
+        {
+            auto collidedRect = collided->getRect();
+            auto isCollidedContainer = collided->getType() == static_cast<int>(CollidableType::container);
+
+            if (isCollidedContainer)
+            {
+                auto leftDistance = std::abs(rect.getMinX() - collidedRect.getMaxX());
+                auto rightDistance = std::abs(rect.getMaxX() - collidedRect.getMinX());
+                auto topDistance = std::abs(rect.getMaxY() - collidedRect.getMinY());
+                auto bottomDistance = std::abs(rect.getMinY() - collidedRect.getMaxY());
+
+                auto minVerticalDistance = std::min(topDistance, bottomDistance);
+                auto minHorizontalDistance = std::min(leftDistance, rightDistance);
+                auto minDistance = std::min(minVerticalDistance, minHorizontalDistance);
+                // If distance is closer
+                if (!found || minDistance < foundDistance)
+                {
+                    found = collided;
+                    foundDistance = minDistance;
+                }
+            }
+        }
+    }
+    // Non-container pass
     if (!found)
     {
         for (auto collided : collidedList)

@@ -5,30 +5,9 @@
 #include "GameLogic/Physics/CollidableNode.h"
 #include "GameLogic/Physics/CollidableType.h"
 #include "GameLogic/Physics/CollidableTypeMask.h"
+#include "Support/Config.h"
 
 USING_NS_CC;
-
-World *World::create(Config *config)
-{
-    World *pRet = new(std::nothrow) World(config);
-
-    if (pRet && pRet->init())
-    {
-        pRet->autorelease();
-        return pRet;
-    }
-    else
-    {
-        delete pRet;
-        pRet = nullptr;
-        return nullptr;
-    }
-}
-
-World::World(Config *config)
-{
-    mConfig = config;
-}
 
 bool World::init()
 {
@@ -201,11 +180,6 @@ void World::createEnvoirment()
     addChild(grassAndSky);
 }
 
-void World::loadConfig()
-{
-
-}
-
 void World::spawnPlayer()
 {
     auto origin = Director::getInstance()->getVisibleOrigin();
@@ -251,7 +225,7 @@ void World::spawnBalloon()
 
 void World::spawnEnemies()
 {
-    auto count = mConfig ? mConfig->getCountTarget() : WorldConsts::Enemy::SPAWN_COUNT;
+    auto count = Config::getInstance().getCountTarget();
     auto repeat = count - 1;
 
     if (count > 0)

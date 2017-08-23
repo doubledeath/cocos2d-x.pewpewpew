@@ -18,5 +18,5 @@ public:
 private:
     int mType;
     int mTypeMask;
-    int mIsCircle;
+    int mIsCircle = false;
 };

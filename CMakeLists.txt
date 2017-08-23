@@ -176,6 +176,7 @@ set(GAME_HEADERS
         Classes/Scene/MainScene.h
         Classes/Scene/SplashScene.h
         Classes/Support/Config.h
+        Classes/Support/ConfigConsts.h
         ${PLATFORM_SPECIFIC_HEADERS} )
 
 

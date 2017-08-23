@@ -3,14 +3,11 @@
 #include "cocos2d.h"
 #include "GameLogic/Physics/Physics.h"
 #include "GameLogic/Player/Player.h"
-#include "Support/Config.h"
 
 class World : public cocos2d::Node
 {
 public:
-    static World *create(Config *config);
-
-    World(Config *config);
+    CREATE_FUNC(World)
 
     virtual bool init() override;
     virtual void update(float delta) override;
@@ -22,7 +19,6 @@ private:
         cocos2d::Vec2 eventStartLocation;
     };
 
-    Config *mConfig;
     TouchOrClickInfo mTouchOrClickInfo;
     TouchOrClickInfo mLastTouchOrClickInfo;
     Physics *mPhysics;
@@ -37,7 +33,6 @@ private:
     void addEventDispatcher();
     void createPhysics();
     void createEnvoirment();
-    void loadConfig();
     void spawnPlayer();
     void spawnBalloon();
     void spawnEnemies();

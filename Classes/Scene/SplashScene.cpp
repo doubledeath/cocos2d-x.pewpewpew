@@ -23,13 +23,11 @@ void SplashScene::loadConfig()
 
     if (fileUtils->isFileExist(AppConsts::SplashScene::CONFIG_FILE_PATH))
     {
-        mConfig = Config::fromString(fileUtils->getStringFromFile(AppConsts::SplashScene::CONFIG_FILE_PATH));
+        Config::getInstance().fromString(fileUtils->getStringFromFile(AppConsts::SplashScene::CONFIG_FILE_PATH));
     }
 }
 
 void SplashScene::startMainScene(float delta)
 {
-    Director::getInstance()->replaceScene(TransitionFade::create(AppConsts::SplashScene::LOADING_FADE_TIME, MainScene::create(mConfig)));
-
-    mConfig = nullptr;
+    Director::getInstance()->replaceScene(TransitionFade::create(AppConsts::SplashScene::LOADING_FADE_TIME, MainScene::create()));
 }

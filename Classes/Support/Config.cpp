@@ -1,30 +1,53 @@
 #include "Config.h"
+#include "ConfigConsts.h"
 
 USING_NS_CC;
 
-Config *Config::fromString(std::string stringConfig)
-{
-    log("Read config on data:\n%s", stringConfig.c_str());
-
-    return nullptr;
-}
-
 Config::Config()
 {
+    setCountTarget(ConfigConsts::Balloon::COUNT_TARGET);
+    setSpeed(ConfigConsts::CannonBall::SPEED);
+    setTime(ConfigConsts::World::TIME);
+}
+
+Config::~Config()
+{
 
 }
 
-int Config::getCountTarget()
+void Config::fromString(std::string stringConfig)
 {
-    return 0;
+    log("Parsing config:\n%s", stringConfig.c_str());
+
+
 }
 
-int Config::getSpeed()
+int Config::getCountTarget() const
 {
-    return 0;
+    return mCountTarget;
 }
 
-int Config::getTime()
+int Config::getSpeed() const
 {
-    return 0;
+    return mSpeed;
+}
+
+int Config::getTime() const
+{
+    return mTime;
+}
+
+void Config::setCountTarget(int countTarget)
+{
+    mCountTarget = countTarget;
+}
+
+void Config::setSpeed(int speed)
+{
+    mSpeed = speed;
+}
+
+void Config::setTime(int time)
+{
+    mTime = time;
 }

@@ -1,11 +1,14 @@
 #include "CannonBall.h"
 #include "ProjectileConsts.h"
+#include "Support/Config.h"
 
 USING_NS_CC;
 
 CannonBall::CannonBall()
 {
     setLocalZOrder(ProjectileConsts::CannonBall::Z_ORDER);
+    setMoveVelocity(Config::getInstance().getSpeed());
+    setIsCircle(true);
 }
 
 bool CannonBall::init()
