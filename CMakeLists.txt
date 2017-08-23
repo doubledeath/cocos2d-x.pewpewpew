@@ -143,6 +143,7 @@ set(GAME_SRC
         Classes/GameLogic/World/World.cpp
         Classes/Scene/MainScene.cpp
         Classes/Scene/SplashScene.cpp
+        Classes/Support/Config.cpp
         ${PLATFORM_SPECIFIC_SRC})
 
 set(GAME_HEADERS
@@ -174,6 +175,7 @@ set(GAME_HEADERS
         Classes/GameLogic/World/WorldConsts.h
         Classes/Scene/MainScene.h
         Classes/Scene/SplashScene.h
+        Classes/Support/Config.h
         ${PLATFORM_SPECIFIC_HEADERS} )
 
 

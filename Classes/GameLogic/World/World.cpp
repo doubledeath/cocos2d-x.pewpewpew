@@ -8,6 +8,28 @@
 
 USING_NS_CC;
 
+World *World::create(Config *config)
+{
+    World *pRet = new(std::nothrow) World(config);
+
+    if (pRet && pRet->init())
+    {
+        pRet->autorelease();
+        return pRet;
+    }
+    else
+    {
+        delete pRet;
+        pRet = nullptr;
+        return nullptr;
+    }
+}
+
+World::World(Config *config)
+{
+    mConfig = config;
+}
+
 bool World::init()
 {
     if (!Node::init())
@@ -24,8 +46,8 @@ bool World::init()
 
     createPhysics();
     createEnvoirment();
-    addEventDispatcher();
     spawnPlayer();
+    addEventDispatcher();
     spawnEnemies();
 
     return true;
@@ -111,6 +133,26 @@ void World::onLongTouchOrClick(Vec2 location)
     mPlayer->onWorldLongTouchOrClick(convertToNodeSpace(location));
 }
 
+void World::addEventDispatcher()
+{
+    // Create a "one by one" touch event listener
+    // (processes one touch at a time)
+    auto touchListener = EventListenerTouchOneByOne::create();
+    // trigger when you push down
+    touchListener->onTouchBegan = [=](Touch *touch, Event *event) { touchOrClickEventDown(touch, nullptr); return true; };
+    // trigger when you let up
+    touchListener->onTouchEnded = [=](Touch *touch, Event *event) { touchOrClickEventUp(touch, nullptr); };
+    // Create a mouse event listener
+    auto mouseListener = EventListenerMouse::create();
+    // trigger when you click down
+    mouseListener->onMouseDown = [=](Event *event) { touchOrClickEventDown(nullptr, dynamic_cast<EventMouse *>(event)); };
+    // trigger when you click up
+    mouseListener->onMouseUp = [=](Event *event) { touchOrClickEventUp(nullptr, dynamic_cast<EventMouse *>(event)); };
+    // Add listeners
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
+}
+
 void World::createPhysics()
 {
     mPhysics = new Physics();
@@ -159,24 +201,9 @@ void World::createEnvoirment()
     addChild(grassAndSky);
 }
 
-void World::addEventDispatcher()
+void World::loadConfig()
 {
-    // Create a "one by one" touch event listener
-    // (processes one touch at a time)
-    auto touchListener = EventListenerTouchOneByOne::create();
-    // trigger when you push down
-    touchListener->onTouchBegan = [=](Touch *touch, Event *event) { touchOrClickEventDown(touch, nullptr); return true; };
-    // trigger when you let up
-    touchListener->onTouchEnded = [=](Touch *touch, Event *event) { touchOrClickEventUp(touch, nullptr); };
-    // Create a mouse event listener
-    auto mouseListener = EventListenerMouse::create();
-    // trigger when you click down
-    mouseListener->onMouseDown = [=](Event *event) { touchOrClickEventDown(nullptr, dynamic_cast<EventMouse *>(event)); };
-    // trigger when you click up
-    mouseListener->onMouseUp = [=](Event *event) { touchOrClickEventUp(nullptr, dynamic_cast<EventMouse *>(event)); };
-    // Add listeners
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
+
 }
 
 void World::spawnPlayer()
@@ -224,7 +251,7 @@ void World::spawnBalloon()
 
 void World::spawnEnemies()
 {
-    auto count = WorldConsts::Enemy::SPAWN_COUNT;
+    auto count = mConfig ? mConfig->getCountTarget() : WorldConsts::Enemy::SPAWN_COUNT;
     auto repeat = count - 1;
 
     if (count > 0)

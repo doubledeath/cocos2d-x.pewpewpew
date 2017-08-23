@@ -2,15 +2,16 @@
 
 #include "cocos2d.h"
 #include "GameLogic/World/World.h"
+#include "Support/Config.h"
 
 class MainScene : public cocos2d::Scene
 {
 public:
-    CREATE_FUNC(MainScene)
+    static MainScene *create(Config *config);
 
-    virtual bool init() override;
+    virtual bool initWithConfig(Config *config);
 private:
     World *mWorld;
 
-    void createWorld();
+    void createWorld(Config *config);
 };
