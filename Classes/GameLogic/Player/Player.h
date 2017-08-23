@@ -8,4 +8,6 @@ public:
     virtual void onWorldSingleTouchOrClick(cocos2d::Vec2 location) = 0;
     virtual void onWorldDoubleTouchOrClick(cocos2d::Vec2 location) = 0;
     virtual void onWorldLongTouchOrClick(cocos2d::Vec2 location) = 0;
+    virtual void onGameStarted() = 0;
+    virtual void onGameOver() = 0;
 };

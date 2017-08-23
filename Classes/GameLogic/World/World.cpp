@@ -25,9 +25,8 @@ bool World::init()
 
     createPhysics();
     createEnvoirment();
-    spawnPlayer();
     addEventDispatcher();
-    spawnEnemies();
+    startGame();
 
     return true;
 }
@@ -99,17 +98,17 @@ void World::touchOrClickEventUp(Touch *touch, EventMouse *eventMouse)
 
 void World::onSingleTouchOrClick(Vec2 location)
 {
-    mPlayer->onWorldSingleTouchOrClick(convertToNodeSpace(location));
+    if (mPlayer) { mPlayer->onWorldSingleTouchOrClick(convertToNodeSpace(location)); }
 }
 
 void World::onDoubleTouchOrClick(Vec2 location)
 {
-    mPlayer->onWorldDoubleTouchOrClick(convertToNodeSpace(location));
+    if (mPlayer) { mPlayer->onWorldDoubleTouchOrClick(convertToNodeSpace(location)); }
 }
 
 void World::onLongTouchOrClick(Vec2 location)
 {
-    mPlayer->onWorldLongTouchOrClick(convertToNodeSpace(location));
+    if (mPlayer) { mPlayer->onWorldLongTouchOrClick(convertToNodeSpace(location)); }
 }
 
 void World::addEventDispatcher()
@@ -178,6 +177,45 @@ void World::createEnvoirment()
     grassAndSky->setPosition(grassAndSkyX, grassAndSkyY);
 
     addChild(grassAndSky);
+    // Label for time
+    auto timeLabelX = origin.x + size.width * WorldConsts::Enviorment::TIMER_LABEL_X_FACTOR;
+    auto timeLabelY = origin.y + size.height * WorldConsts::Enviorment::TIMER_LABEL_Y_FACTOR;
+
+    mTimerLabel = Label::createWithTTF("", WorldConsts::Enviorment::TIMER_LABEL_FONT, WorldConsts::Enviorment::TIMER_LABEL_FONT_SIZE);
+
+    mTimerLabel->setPosition(timeLabelX, timeLabelY);
+
+    addChild(mTimerLabel);
+
+}
+
+void World::createGameOverMenu()
+{
+    auto origin = Director::getInstance()->getVisibleOrigin();
+    auto size = Director::getInstance()->getVisibleSize();
+    auto menuItem = MenuItemFont::create("Restart", [=](Ref* pSender) { startGame(); });
+    auto menuItemX = origin.x + size.width * WorldConsts::GameOverMenu::RESTART_BUTTON_X_FACTOR;
+    auto menuItemY = origin.y + size.height * WorldConsts::GameOverMenu::RESTART_BUTTON_Y_FACTOR;
+
+    menuItem->setPosition(menuItemX, menuItemY);
+
+    auto menuItemBackground = DrawNode::create();
+
+    menuItemBackground->setLocalZOrder(WorldConsts::GameOverMenu::BACKGROUND_Z_ORDER);
+    menuItemBackground->drawSolidRect(origin, Vec2(size.width, size.height), WorldConsts::GameOverMenu::BACKGROUND_COLOR);
+
+    auto gameOverMenu = Menu::createWithItem(menuItem);
+
+    gameOverMenu->setLocalZOrder(WorldConsts::GameOverMenu::Z_ORDER);
+    gameOverMenu->setPosition(origin);
+    gameOverMenu->setContentSize(size);
+
+    mGameOverMenu = Node::create();
+
+    mGameOverMenu->addChild(menuItemBackground);
+    mGameOverMenu->addChild(gameOverMenu);
+
+    addChild(mGameOverMenu);
 }
 
 void World::spawnPlayer()
@@ -232,4 +270,56 @@ void World::spawnEnemies()
     {
         schedule([=](float delta) { spawnBalloon(); }, WorldConsts::Enemy::SPAWN_INTERVAL, repeat, WorldConsts::Enemy::SPAWN_DELAY, WorldConsts::Enemy::SPAWN_KEY);
     }
+}
+
+void World::cleanWorld()
+{
+    if (mPlayer) { mPlayer->runAction(RemoveSelf::create(true)); mPlayer = nullptr; }
+
+    for (auto child : getChildren())
+    {
+        if (dynamic_cast<Enemy *>(child)) { child->runAction(RemoveSelf::create(true)); }
+    }
+}
+
+void World::startGame()
+{
+    if (mGameOverMenu) { mGameOverMenu->runAction(RemoveSelf::create(true)); }
+
+    cleanWorld();
+    spawnPlayer();
+
+    mTimerLabel->setString("Spawning enemies...");
+
+    spawnEnemies();
+    // Wait for enemies are spawned...
+    auto delay = WorldConsts::Enemy::SPAWN_DELAY + WorldConsts::Enemy::SPAWN_INTERVAL * Config::getInstance().getCountTarget();
+
+    scheduleOnce([=](float delta) { if (mPlayer) { mPlayer->onGameStarted(); } startTimer(); }, delay, WorldConsts::Player::ON_GAME_STARTED);
+}
+
+void World::startTimer()
+{
+    mTimeRemaining = Config::getInstance().getTime();
+
+    mTimerLabel->setString("Pew pew pew them!");
+    // Scheduling every second
+    schedule([=](float delta) {
+        mTimeRemaining--;
+
+        mTimerLabel->setString(std::to_string(mTimeRemaining));
+
+        if (mTimeRemaining <= 0) { endGame(); }
+    }, 1, WorldConsts::World::TIMER_KEY);
+}
+
+void World::endGame()
+{
+    mTimerLabel->setString("Game over!");
+
+    unschedule(WorldConsts::World::TIMER_KEY);
+
+    mPlayer->onGameOver();
+
+    createGameOverMenu();
 }

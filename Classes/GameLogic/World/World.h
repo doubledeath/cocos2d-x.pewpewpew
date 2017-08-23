@@ -24,6 +24,9 @@ private:
     Physics *mPhysics;
     Collidable *mEnemyZone;
     Player *mPlayer;
+    int mTimeRemaining;
+    cocos2d::Label *mTimerLabel;
+    cocos2d::Node *mGameOverMenu;
 
     void touchOrClickEventDown(cocos2d::Touch *touch, cocos2d::EventMouse *eventMouse);
     void touchOrClickEventUp(cocos2d::Touch *touch, cocos2d::EventMouse *eventMouse);
@@ -33,7 +36,12 @@ private:
     void addEventDispatcher();
     void createPhysics();
     void createEnvoirment();
+    void createGameOverMenu();
     void spawnPlayer();
     void spawnBalloon();
     void spawnEnemies();
+    void cleanWorld();
+    void startGame();
+    void startTimer();
+    void endGame();
 };

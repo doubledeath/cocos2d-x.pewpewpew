@@ -34,6 +34,16 @@ void Cannon::onWorldLongTouchOrClick(Vec2 location)
     rotate(location);
 }
 
+void Cannon::onGameStarted()
+{
+    mIsGameStarted = true;
+}
+
+void Cannon::onGameOver()
+{
+    mIsGameStarted = false;
+}
+
 void Cannon::setAddToWorldDelegate(const std::function<void (CannonBall *cannonBall)> &addToWorldDelegate)
 {
     mAddToWorldDelegate = addToWorldDelegate;
@@ -52,7 +62,7 @@ void Cannon::setParticleApplierDelegate(const std::function<void (ParticleSystem
 void Cannon::rotate(Vec2 location)
 {
     // Rotate cannon if possible
-    if (!mIsRotating) {
+    if (mIsGameStarted && !mIsRotating) {
         mIsRotating = true;
 
         auto diff = getPosition() - location;
@@ -69,7 +79,7 @@ void Cannon::rotate(Vec2 location)
 void Cannon::pew()
 {
     // Pew by a new CannonBall if possible
-    if (mAddToWorldDelegate && !mIsReloading && !mIsRotating) {
+    if (mIsGameStarted && mAddToWorldDelegate && !mIsReloading && !mIsRotating) {
         mIsReloading = true;
 
         auto cannonBall = CannonBall::create();
