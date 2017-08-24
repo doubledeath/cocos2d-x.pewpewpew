@@ -22,6 +22,7 @@ namespace WorldConsts
         const float TIMER_LABEL_FONT_SIZE = 32;
         const float TIMER_LABEL_X_FACTOR = 0.5;
         const float TIMER_LABEL_Y_FACTOR = 0.35;
+        const float TIMER_LABEL_WIDTH_FACTOR = 0.7;
     }
     namespace GameOverMenu
     {

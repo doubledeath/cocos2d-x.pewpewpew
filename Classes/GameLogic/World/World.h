@@ -44,4 +44,5 @@ private:
     void startGame();
     void startTimer();
     void endGame();
+    int getRemainingEnemy();
 };

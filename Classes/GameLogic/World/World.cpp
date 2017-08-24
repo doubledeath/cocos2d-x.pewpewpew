@@ -178,12 +178,16 @@ void World::createEnvoirment()
 
     addChild(grassAndSky);
     // Label for time
-    auto timeLabelX = origin.x + size.width * WorldConsts::Enviorment::TIMER_LABEL_X_FACTOR;
-    auto timeLabelY = origin.y + size.height * WorldConsts::Enviorment::TIMER_LABEL_Y_FACTOR;
+    auto timerLabelX = origin.x + size.width * WorldConsts::Enviorment::TIMER_LABEL_X_FACTOR;
+    auto timerLabelY = origin.y + size.height * WorldConsts::Enviorment::TIMER_LABEL_Y_FACTOR;
+    auto timerLabelWidth = size.width * WorldConsts::Enviorment::TIMER_LABEL_WIDTH_FACTOR;
 
-    mTimerLabel = Label::createWithTTF("", WorldConsts::Enviorment::TIMER_LABEL_FONT, WorldConsts::Enviorment::TIMER_LABEL_FONT_SIZE);
+    mTimerLabel = Label::createWithTTF("",
+                                       WorldConsts::Enviorment::TIMER_LABEL_FONT,
+                                       WorldConsts::Enviorment::TIMER_LABEL_FONT_SIZE,
+                                       Size(timerLabelWidth, 0), TextHAlignment::CENTER);
 
-    mTimerLabel->setPosition(timeLabelX, timeLabelY);
+    mTimerLabel->setPosition(timerLabelX, timerLabelY);
 
     addChild(mTimerLabel);
 
@@ -284,7 +288,7 @@ void World::cleanWorld()
 
 void World::startGame()
 {
-    if (mGameOverMenu) { mGameOverMenu->runAction(RemoveSelf::create(true)); }
+    if (mGameOverMenu) { mGameOverMenu->runAction(RemoveSelf::create(true)); mGameOverMenu = nullptr; }
 
     cleanWorld();
     spawnPlayer();
@@ -305,21 +309,53 @@ void World::startTimer()
     mTimerLabel->setString("Pew pew pew them!");
     // Scheduling every second
     schedule([=](float delta) {
-        mTimeRemaining--;
+        auto remainingEnemy = getRemainingEnemy();
 
-        mTimerLabel->setString(std::to_string(mTimeRemaining));
+        if (remainingEnemy == 0)
+        {
+            endGame();
+        }
+        else
+        {
+            mTimeRemaining--;
 
-        if (mTimeRemaining <= 0) { endGame(); }
+            mTimerLabel->setString(std::to_string(mTimeRemaining));
+
+            if (mTimeRemaining <= 0) { endGame(); }
+        }
     }, 1, WorldConsts::World::TIMER_KEY);
 }
 
 void World::endGame()
 {
-    mTimerLabel->setString("Game over!");
+    auto remainingEnemy = getRemainingEnemy();
+
+    auto wasKilled = Config::getInstance().getCountTarget() - remainingEnemy;
+
+    if (wasKilled == Config::getInstance().getCountTarget())
+    {
+        mTimerLabel->setString("Congratulations!");
+    }
+    else
+    {
+        mTimerLabel->setString("Game over! You tried hard, and killed: " + std::to_string(wasKilled) + " ones!");
+    }
 
     unschedule(WorldConsts::World::TIMER_KEY);
 
     mPlayer->onGameOver();
 
     createGameOverMenu();
+}
+
+int World::getRemainingEnemy()
+{
+    auto remainingEnemy = 0;
+
+    for (auto child : getChildren())
+    {
+        if (dynamic_cast<Enemy *>(child)) { remainingEnemy++; }
+    }
+
+    return remainingEnemy;
 }
